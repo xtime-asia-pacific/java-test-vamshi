@@ -1,16 +1,14 @@
 name: mvn-building
-
 on:
   workflow_dispatch:
   push:
     branches: 
       - 'feature*'
-
 jobs:
   validation:
     runs-on: ubuntu-latest
     steps:
-      - name: version check
+      - name: version checking
         run: |
           echo "java version"
           java -version 
