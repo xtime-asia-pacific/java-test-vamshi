@@ -1,4 +1,4 @@
-name: mvn-build
+name: Maven build
 
 on:
   workflow_dispatch:
