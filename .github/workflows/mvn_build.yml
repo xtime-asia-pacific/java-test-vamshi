@@ -1,4 +1,4 @@
-name: mvn-build
+name: mvn-building
 
 on:
   workflow_dispatch:
