@@ -36,7 +36,7 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Confirm Java and Maven Version
+      - name: Version Validations
         run: |
           echo "JAVA_HOME: $JAVA_HOME"
           java -version
