@@ -8,10 +8,16 @@ on:
 
 jobs:
   validation:
+  
     runs-on: ubuntu-latest
     steps:
-      - name: version check
-        run: |
+       - name: Set up Java 21 (AWS Corretto)
+         uses: actions/setup-java@v4
+         with:
+          distribution: 'corretto'
+          java-version: '21' 
+       - name: version check
+         run: |
           echo "java version"
           java -version 
           echo "maven version"
@@ -20,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build with Maven
         run: mvn clean install
