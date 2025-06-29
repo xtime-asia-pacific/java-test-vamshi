@@ -4,14 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       build-mode:
-        description: 'Select the Maven build goal'
+        description: 'Enter build mode: build | package | deploy'
         required: true
         default: 'build'
-        type: choice
-        options:
-          - build
-          - package
-          - deploy
   push:
     branches: 
       - 'feature'
@@ -43,7 +38,7 @@ jobs:
               deploy_args="-Dmaven.test.skip=true -DBUILD_NUMBER=${{ github.run_number }} clean package"
               ;;
             *)
-              echo "Invalid mode selected."
+              echo "Invalid mode selected: $mode"
               exit 1
               ;;
           esac
