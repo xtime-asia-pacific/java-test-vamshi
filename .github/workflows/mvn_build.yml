@@ -2,6 +2,16 @@ name: Maven build
 
 on:
   workflow_dispatch:
+    inputs:
+      build-mode:
+        description: 'Select the Maven build goal'
+        required: true
+        default: 'build'
+        type: choice
+        options:
+          - build
+          - package
+          - deploy
   push:
     branches: 
       - 'feature'
@@ -17,10 +27,29 @@ jobs:
       - name: Generate Maven Build Parameters
         id: mvn-build-params
         run: |
-          if [[ "${{ github.event_name }}" == 'push' ||  "${{ github.event_name }}" == 'workflow_dispatch' ]]; then
-            deploy_args="-Dmaven.test.skip=true -DBUILD_NUMBER=${{ github.run_number }} clean package"
-            echo "phases_args=$deploy_args" >> "$GITHUB_OUTPUT"
+          mode="${{ github.event.inputs.build-mode }}"
+          if [[ "${{ github.event_name }}" == 'push' ]]; then
+            mode="deploy"
           fi
+
+          case "$mode" in
+            build)
+              deploy_args="clean compile"
+              ;;
+            package)
+              deploy_args="clean package"
+              ;;
+            deploy)
+              deploy_args="-Dmaven.test.skip=true -DBUILD_NUMBER=${{ github.run_number }} clean package"
+              ;;
+            *)
+              echo "Invalid mode selected."
+              exit 1
+              ;;
+          esac
+
+          echo "phases_args=$deploy_args" >> "$GITHUB_OUTPUT"
+
   build:
     name: "Build WAR"
     needs: prebuild
