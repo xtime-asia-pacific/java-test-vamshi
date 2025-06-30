@@ -19,5 +19,5 @@ jobs:
   build:
      needs: validation
      uses: xtime-asia-pacific/.buildcode/.github/workflows/mvn_build.yml@feature1
-     name: Build with Maven 
+     name: Build with Maven from another workflow
      
