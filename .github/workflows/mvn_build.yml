@@ -73,10 +73,6 @@ jobs:
          ls -lart 
          pwd
       
-      - name: Copy webapp-runner jar
-        run: |
-          cd target/dependency/
-          cp webapp-runner.jar target/dependency/webapp-runner.jar
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
