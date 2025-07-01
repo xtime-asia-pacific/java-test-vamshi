@@ -65,7 +65,10 @@ jobs:
           mvn -version
 
       - name: Run Maven Build
-        run: mvn ${{ needs.prebuild.outputs.mvn-build-phases-args }}
+        run: |
+         mvn ${{ needs.prebuild.outputs.mvn-build-phases-args }}
+         ls -lart
+         pwd
       
       - name: Copy webapp-runner jar
         run: |
