@@ -69,11 +69,14 @@ jobs:
          mvn ${{ needs.prebuild.outputs.mvn-build-phases-args }}
          ls -lart
          pwd
+         cd target/dependency 
+         ls -lart 
+         pwd
       
       - name: Copy webapp-runner jar
         run: |
-          mkdir -p target/dependency
-          cp webapp-runner-8.0.30.2.jar target/dependency/webapp-runner.jar
+          cd target/dependency/
+          cp webapp-runner.jar target/dependency/webapp-runner.jar
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
