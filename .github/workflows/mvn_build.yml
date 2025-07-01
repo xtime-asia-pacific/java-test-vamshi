@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       build-mode:
-        description: 'Enter build mode: build | package | deploy'
+        description: 'Enter build mode: build | deploy'
         required: true
         type: string
         default: 'build'
@@ -30,13 +30,10 @@ jobs:
 
           case "$mode" in
             build)
-              deploy_args="clean compile"
-              ;;
-            package)
               deploy_args="clean package"
               ;;
             deploy)
-              deploy_args="-Dmaven.test.skip=true -DBUILD_NUMBER=${{ github.run_number }} clean package"
+              deploy_args="-Dmaven.test.skip=true -DBUILD_NUMBER=${{ github.run_number }} clean deploy"
               ;;
             *)
               echo "Invalid mode selected: $mode"
@@ -69,3 +66,11 @@ jobs:
 
       - name: Run Maven Build
         run: mvn ${{ needs.prebuild.outputs.mvn-build-phases-args }}
+  imagecreation:
+       name: "generating dockerimage"
+       needs: build
+       runs-on: ubuntu-latest
+       steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+        
