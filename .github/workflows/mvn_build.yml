@@ -66,6 +66,20 @@ jobs:
 
       - name: Run Maven Build
         run: mvn ${{ needs.prebuild.outputs.mvn-build-phases-args }}
+      
+      - name: Copy webapp-runner jar
+        run: |
+          mkdir -p target/dependency
+          cp webapp-runner-8.0.30.2.jar target/dependency/webapp-runner.jar
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: war-and-runner
+          path: |
+            target/*.war
+            target/dependency/webapp-runner.jar
+      
   imagecreation:
        name: "generating dockerimage"
        needs: build
@@ -73,6 +87,11 @@ jobs:
        steps:
         - name: Checkout Code
           uses: actions/checkout@v4
+        - name: Download WAR and Runner JAR
+          uses: actions/download-artifact@v4
+          with:
+            name: war-and-runner
+            path: target
         - name: Create Dockerfile
           run: |
             cat <<EOF > Dockerfile
@@ -80,7 +99,7 @@ jobs:
         
             WORKDIR /app
         
-            COPY /home/runner/work/java-test-vamshi/java-test-vamshi/target/dependency/webapp-runner.jar webapp-runner.jar
+            COPY target/dependency/webapp-runner.jar webapp-runner.jar
             COPY target/*.war app.war
         
             EXPOSE 8080
