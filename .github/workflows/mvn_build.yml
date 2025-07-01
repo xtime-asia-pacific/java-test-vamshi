@@ -73,4 +73,21 @@ jobs:
        steps:
         - name: Checkout Code
           uses: actions/checkout@v4
+        - name: Create Dockerfile
+          run: |
+            cat <<EOF > Dockerfile
+            FROM eclipse-temurin:21-jdk
+        
+            WORKDIR /app
+        
+            COPY target/dependency/webapp-runner.jar webapp-runner.jar
+            COPY target/*.war app.war
+        
+            EXPOSE 8080
+        
+            CMD ["java", "-jar", "webapp-runner.jar", "app.war"]
+            EOF
+        - name: Build Docker Image
+          run: |
+              docker build -t java-test-vamshi/testimage:${{ github.run_number }} .
         
