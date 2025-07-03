@@ -133,7 +133,7 @@ jobs:
                   "-Ddb.username=root", \
                   "-Ddb.password=root", \
                   "-jar", "webapp-runner.jar", "app.war"]           
-                  EOF
+            EOF
         - name: Build Docker Image
           run: |
               docker build -t java-test-vamshi/testimage:${{ github.run_number }} .
