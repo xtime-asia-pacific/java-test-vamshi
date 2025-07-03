@@ -11,9 +11,6 @@ on:
   push:
     branches: 
       - 'feature'
-env:
-  AWS_ACCOUNT: 498040579653
-  AWS_REGION: "us-west-2"
 jobs:
   prebuild:
     outputs:
@@ -111,7 +108,7 @@ jobs:
                 echo "MySQL is ready!"
                 break
               fi
-              sleep 5
+              sleep 20
             done
 
         - name: Execute SQL Script
