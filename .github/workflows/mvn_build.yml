@@ -88,31 +88,6 @@ jobs:
           name: war-and-runner
           path: target
 
-      - name: Create Docker Network
-        run: docker network create app-network
-
-      - name: Start MySQL Container
-        run: |
-          docker run -d \
-            --name mysql-db \
-            --network app-network \
-            -e MYSQL_ROOT_PASSWORD=root \
-            -e MYSQL_DATABASE=onlinebookstore \
-            mysql:8
-
-      - name: Wait for MySQL to Accept Connections
-        run: |
-          for i in {1..15}; do
-            echo "Checking MySQL (attempt $i)..."
-            docker exec mysql-db mysql -uroot -proot -e "SELECT 1;" && break
-            sleep 5
-          done
-
-      - name: Execute SQL Script
-        run: |
-          docker cp sqlscript.sql mysql-db:/sqlscript.sql
-          docker exec mysql-db sh -c 'mysql -uroot -proot onlinebookstore < /sqlscript.sql'
-
       - name: Create Dockerfile
         run: |
           cat <<EOF > Dockerfile
@@ -125,7 +100,7 @@ jobs:
 
           EXPOSE 8080
 
-          CMD ["java", "-Ddb.driver=com.mysql.cj.jdbc.Driver", "-Ddb.host=jdbc:mysql://mysql-db:3306/onlinebookstore", "-Ddb.username=root", "-Ddb.password=root", "-jar", "webapp-runner.jar", "app.war"]
+          CMD ["java", "-jar", "webapp-runner.jar", "app.war"]
           EOF
 
       - name: Build Docker Image
@@ -135,7 +110,6 @@ jobs:
         run: |
           docker run -d \
             --name testcontainer \
-            --network app-network \
             -p 8080:8080 \
             java-test-vamshi/testimage:${{ github.run_number }}
 
