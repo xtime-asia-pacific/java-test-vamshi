@@ -113,13 +113,4 @@ jobs:
         - name: Build Docker Image
           run: |
               docker build -t java-test-vamshi/testimage:${{ github.run_number }} .
-  Ecrlogin: 
-         name: "login to Ecr"
-         needs: imagecreation
-         runs-on: ubuntu-latest
-         steps:
-         - name: Login to Amazon ECR
-           id: login-ecr
-           uses: aws-actions/amazon-ecr-login@v2
-           with:
-              registries: ${{ env.AWS_ACCOUNT }}
+ 
