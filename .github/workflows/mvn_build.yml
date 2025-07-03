@@ -114,7 +114,7 @@ jobs:
         - name: Execute SQL Script
           run: |
             docker cp sqlscript.sql mysql-db:/sqlscript.sql
-            docker exec mysql-db sh -c 'mysql -u root -p root onlinebookstore < /sqlscript.sql'
+            docker exec mysql-db sh -c 'mysql -uroot -proot onlinebookstore < /sqlscript.sql'
             
         - name: Create Dockerfile
           run: |
