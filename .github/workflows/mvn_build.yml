@@ -106,7 +106,7 @@ jobs:
             COPY target/dependency/webapp-runner.jar webapp-runner.jar
             COPY target/*.war app.war
         
-            EXPOSE 8083
+            EXPOSE 8080
         
             CMD ["java", "-jar", "webapp-runner.jar", "app.war"]
             EOF
@@ -115,12 +115,12 @@ jobs:
               docker build -t java-test-vamshi/testimage:${{ github.run_number }} .
         - name: Run Container from Image
           run: |
-            docker run -d -p 8083:8083 --name testcontainer java-test-vamshi/testimage:${{ github.run_number }}
+            docker run -d -p 8080:8080 --name testcontainer java-test-vamshi/testimage:${{ github.run_number }}
 
         - name: Wait for app to start
-          run: sleep 10
+          run: sleep 15
     
         - name: Test App Running
           run: |
-            curl -I http://localhost:8083/onlinebookstore/ || echo "App is not responding"
+            curl -I http://localhost:8080/onlinebookstore/ || echo "App is not responding"
             
