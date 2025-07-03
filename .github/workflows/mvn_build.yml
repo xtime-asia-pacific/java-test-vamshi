@@ -96,6 +96,29 @@ jobs:
           with:
             name: war-and-runner
             path: target
+        - name: Start MySQL Container
+          run: |
+            docker run -d \
+              --name mysql-db \
+              -e MYSQL_ROOT_PASSWORD=root \
+              -e MYSQL_DATABASE=onlinebookstore \
+              -p 3306:3306 \
+              mysql:8
+        - name: Wait for MySQL to Start
+          run: |
+            for i in {1..10}; do
+              if docker exec mysql-db mysqladmin ping -h "localhost" --silent; then
+                echo "MySQL is ready!"
+                break
+              fi
+              sleep 5
+            done
+
+        - name: Execute SQL Script
+          run: |
+            docker cp sqlscript.sql mysql-db:/sqlscript.sql
+            docker exec mysql-db sh -c 'mysql -uroot -proot onlinebookstore < /sqlscript.sql'
+            
         - name: Create Dockerfile
           run: |
             cat <<EOF > Dockerfile
@@ -108,8 +131,12 @@ jobs:
         
             EXPOSE 8080
         
-            CMD ["java", "-jar", "webapp-runner.jar", "app.war"]
-            EOF
+            CMD ["java", "-Ddb.driver=com.mysql.cj.jdbc.Driver", \
+                  "-Ddb.host=jdbc:mysql://mysql-db:3306/onlinebookstore", \
+                  "-Ddb.username=root", \
+                  "-Ddb.password=root", \
+                  "-jar", "webapp-runner.jar", "app.war"]           
+                  EOF
         - name: Build Docker Image
           run: |
               docker build -t java-test-vamshi/testimage:${{ github.run_number }} .
